@@ -1,0 +1,691 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2580
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Menlo-Regular;\f2\fnil\fcharset0 AppleColorEmoji;
+\f3\fnil\fcharset0 Menlo-Bold;}
+{\colortbl;\red255\green255\blue255;\red108\green121\blue134;\red31\green31\blue36;\red255\green255\blue255;
+\red253\green143\blue63;\red252\green106\blue93;\red108\green121\blue134;\red252\green95\blue163;\red65\green161\blue192;
+\red208\green191\blue105;\red161\green103\blue230;\red253\green143\blue63;\red103\green183\blue164;\red103\green183\blue164;
+\red208\green191\blue105;\red208\green168\blue255;}
+{\*\expandedcolortbl;;\csgenericrgb\c42394\c47462\c52518;\csgenericrgb\c12054\c12284\c14131;\csgenericrgb\c100000\c100000\c100000\c85000;
+\csgenericrgb\c99131\c56076\c24611;\csgenericrgb\c98912\c41558\c36568;\csgenericrgb\c42394\c47462\c52518\c45000;\csgenericrgb\c98839\c37355\c63833;\csgenericrgb\c25490\c63137\c75294;
+\csgenericrgb\c81498\c74939\c41233;\csgenericrgb\c63137\c40392\c90196;\csgenericrgb\c99216\c56078\c24706;\csgenericrgb\c40538\c71705\c64209;\csgenericrgb\c40392\c71765\c64314;
+\csgenericrgb\c81569\c74902\c41177;\csgenericrgb\c81681\c65692\c99927;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww28600\viewh18000\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 q
+\f1\fs28 \cf2 \cb3 //\cf4 \
+\pard\tx692\pardeftab692\pardirnatural\partightenfactor0
+\cf2 //  main.c\cf4 \
+\cf2 //  C code\cf4 \
+\cf2 //\cf4 \
+\cf2 //  Created by Zain 
+\f2 \uc0\u55357 \u56443 
+\f1  on 06/10/2021.\cf4 \
+\cf2 //\cf4 \
+\
+\cf5 #include \cf6 <sys/types.h>\cf4 \
+\cf5 #include \cf6 <sys/wait.h>\cf4 \
+\cf5 #include \cf6 <unistd.h>\cf4 \
+\cf5 #include \cf6 <stdio.h>\cf4 \
+\cf5 #include \cf6 <string.h>\cf4 \
+\cf5 #include \cf6 <stdlib.h>\cf4 \
+\cf5 #include \cf6 <signal.h>\cf4 \
+\cf5 #include \cf6 <errno.h>\cf4 \
+\cf5 #include \cf6 <fcntl.h>\cf4 \
+\
+\cf7 ///
+\f0 \cf2 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+\f1 \cf4 \
+\cf7 ///
+\f0 \cf2 /////////////////////////////////////D E C L A R A T I O N S     O F      F U N C T I O N S /////////////////////////////////////
+\f1 \cf4 \
+\cf7 ///
+\f0 \cf2 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+\f1 \cf4 \
+
+\f3\b \cf8 char
+\f1\b0 \cf4 ** \cf9 parsingCommand\cf4 (
+\f3\b \cf8 char
+\f1\b0 \cf4  *, 
+\f3\b \cf8 char
+\f1\b0 \cf4  *);\
+
+\f3\b \cf8 void
+\f1\b0 \cf4  \cf9 pipe_Function\cf4 (
+\f3\b \cf8 char
+\f1\b0 \cf4  **);\
+
+\f3\b \cf8 void
+\f1\b0 \cf4  \cf9 basic_Command\cf4 (
+\f3\b \cf8 char
+\f1\b0 \cf4  *);\
+
+\f3\b \cf8 int
+\f1\b0 \cf4  maxSize = \cf10 10\cf4 ;\
+\
+\cf7 ///
+\f0 \cf2 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+\f1 \cf4 \
+\cf7 ///
+\f0 \cf2 /////////////////////////////////////                K I L L      F U N C T I O N                            /////////////////////////////////////
+\f1 \cf4 \
+\cf7 ///
+\f0 \cf2 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+\f1 \cf4 \
+
+\f3\b \cf8 void
+\f1\b0 \cf4  \cf9 forKill\cf4 (
+\f3\b \cf8 int
+\f1\b0 \cf4  input)\
+\{\
+      
+\f3\b \cf8 if
+\f1\b0 \cf4 (input == \cf10 2\cf4  || input == \cf10 20\cf4 )\
+      \{\
+      \}\
+      
+\f3\b \cf8 else
+\f1\b0 \cf4 \
+      \{\
+              \cf11 kill\cf4 (\cf10 0\cf4 ,\cf12 SIGCONT\cf4 );\
+      \}\
+\}\
+\cf7 ///
+\f0 \cf2 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+\f1 \cf4 \
+\cf7 ///
+\f0 \cf2 /////////////////////////////////////             P A R S I N G      F U N C T I O N S                /////////////////////////////////////
+\f1 \cf4 \
+\cf7 ///
+\f0 \cf2 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+\f1 \cf4 \
+\
+
+\f3\b \cf8 char
+\f1\b0 \cf4  **\cf9 parsingCommand\cf4 (
+\f3\b \cf8 char
+\f1\b0 \cf4  *arraySTR, 
+\f3\b \cf8 char
+\f1\b0 \cf4  *Input)\
+\{\
+    
+\f3\b \cf8 char
+\f1\b0 \cf4  **pointer_ARG = (
+\f3\b \cf8 char
+\f1\b0 \cf4  **)\cf11 malloc\cf4 (
+\f3\b \cf8 sizeof
+\f1\b0 \cf4 (
+\f3\b \cf8 char
+\f1\b0 \cf4  *) * \cf13 maxSize\cf4 );\
+    
+\f3\b \cf8 int
+\f1\b0 \cf4  i = \cf10 1\cf4 ;\
+    
+\f3\b \cf8 int
+\f1\b0 \cf4  index = \cf10 0\cf4 ;\
+      \
+    
+\f3\b \cf8 char
+\f1\b0 \cf4  *dummyVar = \cf11 strtok\cf4 (arraySTR, Input);\
+    
+\f3\b \cf8 while
+\f1\b0 \cf4 (dummyVar)\
+      \{\
+          
+\f3\b \cf8 if
+\f1\b0 \cf4 (index >= i * \cf13 maxSize\cf4 )\
+          \{\
+              pointer_ARG = \cf11 realloc\cf4 (pointer_ARG, 
+\f3\b \cf8 sizeof
+\f1\b0 \cf4 (
+\f3\b \cf8 char
+\f1\b0 \cf4  *) * ( \cf13 maxSize\cf4  * (++i)));\
+              \cf2 //ALLOCATING THE SIZE OF ARRAY IN POINTER\cf4 \
+          \}\
+              \cf2 //printf("%s",p);\cf4 \
+                pointer_ARG[index] = dummyVar;\
+                index++;\cf2 //COUNTER TO INDEX\cf4 \
+                dummyVar = \cf11 strtok\cf4 (
+\f3\b \cf8 NULL
+\f1\b0 \cf4 , Input);\cf2 // tokenizing a string\cf4 \
+      \}\
+      pointer_ARG[index] = 
+\f3\b \cf8 NULL
+\f1\b0 \cf4 ;\
+      
+\f3\b \cf8 return
+\f1\b0 \cf4  pointer_ARG;\
+\}\
+\cf7 ///
+\f0 \cf2 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+\f1 \cf4 \
+\cf7 ///
+\f0 \cf2 /////////////////////////    R  E D I R E C T I O N    P A R S I N G   F U N C T I O N /  ////////////////////////////////////
+\f1 \cf4 \
+\cf7 ///
+\f0 \cf2 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+\f1 \cf4 \
+
+\f3\b \cf8 char
+\f1\b0 \cf4  **\cf9 redirectionFunction\cf4 (
+\f3\b \cf8 char
+\f1\b0 \cf4  *arrayStr, 
+\f3\b \cf8 char
+\f1\b0 \cf4  *Input)\
+\{\
+    
+\f3\b \cf8 char
+\f1\b0 \cf4  ** ptr_LES = (
+\f3\b \cf8 char
+\f1\b0 \cf4  **)\cf11 malloc\cf4 (
+\f3\b \cf8 sizeof
+\f1\b0 \cf4 (
+\f3\b \cf8 char
+\f1\b0 \cf4  *) * \cf13 maxSize\cf4 );\
+    
+\f3\b \cf8 char
+\f1\b0 \cf4  **ptr_ARG = 
+\f3\b \cf8 NULL
+\f1\b0 \cf4 ;\
+    
+\f3\b \cf8 int
+\f1\b0 \cf4  i = \cf10 1\cf4 , INDEX = \cf10 0\cf4 ;\
+    
+\f3\b \cf8 int
+\f1\b0 \cf4  counter = \cf10 0\cf4 ;\
+    
+\f3\b \cf8 char
+\f1\b0 \cf4  *PTR = \cf11 strtok\cf4 (arrayStr, Input);\cf2 // tokenizing a string\cf4 \
+    \
+    \cf2 //while loop\cf4 \
+      
+\f3\b \cf8 while
+\f1\b0 \cf4 (PTR)\
+      \{\
+        \
+          
+\f3\b \cf8 if
+\f1\b0 \cf4 (INDEX >= i * \cf13 maxSize\cf4 )\
+         \{\
+            ptr_ARG = \cf11 realloc\cf4 (ptr_ARG, 
+\f3\b \cf8 sizeof
+\f1\b0 \cf4 (
+\f3\b \cf8 char
+\f1\b0 \cf4  *) * ( \cf13 maxSize\cf4  * (++i)));\cf2 //allocating the size of array\cf4 \
+         \}\
+          \
+          
+\f3\b \cf8 if
+\f1\b0 \cf4 (counter != \cf10 0\cf4 )\
+          \{\
+                        \
+              ptr_ARG = \cf14 parsingCommand\cf4 (PTR, \cf6 " "\cf4 );\
+              ptr_LES[INDEX] = ptr_ARG[\cf10 0\cf4 ];\
+              INDEX++;\
+         \}\
+          \
+          counter += \cf10 1\cf4 ;\
+          PTR = \cf11 strtok\cf4 (
+\f3\b \cf8 NULL
+\f1\b0 \cf4 , Input);\cf2 // tokenizing a string\cf4 \
+      \}\
+    \
+      ptr_LES[INDEX] = 
+\f3\b \cf8 NULL
+\f1\b0 \cf4 ;\
+      
+\f3\b \cf8 return
+\f1\b0 \cf4  ptr_LES;\
+\}\
+\cf7 ///
+\f0 \cf2 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+\f1 \cf4 \
+\cf7 ///
+\f0 \cf2 /////////////////////////////////////PA R S I N G   A R G U M E N T     F U N C T I O N  /////////////////////////////////////
+\f1 \cf4 \
+\cf7 ///
+\f0 \cf2 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+\f1 \cf4 \
+
+\f3\b \cf8 char
+\f1\b0 \cf4  **\cf9 parserArg\cf4 (
+\f3\b \cf8 char
+\f1\b0 \cf4  *arrayStr, 
+\f3\b \cf8 char
+\f1\b0 \cf4  *Input)\
+\{\
+        
+\f3\b \cf8 int
+\f1\b0 \cf4  counter = \cf10 2\cf4 ;\cf2 //bcz we start with to to check\cf4 \
+        
+\f3\b \cf8 char
+\f1\b0 \cf4  **ptrARG = (
+\f3\b \cf8 char
+\f1\b0 \cf4  **)\cf11 malloc\cf4 (
+\f3\b \cf8 sizeof
+\f1\b0 \cf4 (
+\f3\b \cf8 char
+\f1\b0 \cf4  *) * \cf13 maxSize\cf4 );\
+        
+\f3\b \cf8 int
+\f1\b0 \cf4  i = \cf10 1\cf4 ;\
+        
+\f3\b \cf8 int
+\f1\b0 \cf4  index = \cf10 0\cf4 ;\
+        
+\f3\b \cf8 char
+\f1\b0 \cf4  *PTR = \cf11 strtok\cf4 (arrayStr, Input);\cf2 // tokenizing a string\cf4 \
+   \
+    \cf2 //while loop\cf4 \
+      
+\f3\b \cf8 while
+\f1\b0 \cf4 (PTR)\
+      \{\
+          \cf2 //if else conditions\cf4 \
+              
+\f3\b \cf8 if
+\f1\b0 \cf4 (index >= i * \cf13 maxSize\cf4 )\
+              \{\
+                      \
+                  ptrARG = \cf11 realloc\cf4 (ptrARG, 
+\f3\b \cf8 sizeof
+\f1\b0 \cf4 (
+\f3\b \cf8 char
+\f1\b0 \cf4  *) * ( \cf13 maxSize\cf4  * (++i)));\
+                  \cf2 //allocating the size of Array\cf4 \
+              \}\
+               \cf2 //string comparison\cf4 \
+              
+\f3\b \cf8 if
+\f1\b0 \cf4 ((\cf11 strcmp\cf4 (PTR, \cf6 "<"\cf4 ) == \cf10 0\cf4  )|| (\cf11 strcmp\cf4 (PTR, \cf6 ">"\cf4 ) == \cf10 0\cf4  ))\
+              \{\
+                  counter = \cf10 0\cf4 ;\
+              \}\
+              
+\f3\b \cf8 else
+\f1\b0 \cf4  
+\f3\b \cf8 if
+\f1\b0 \cf4 (counter != \cf10 1\cf4 )\
+              \{\
+                  ptrARG[index] = PTR;\
+                  index++;\
+              \}\
+              counter++;\
+              PTR = \cf11 strtok\cf4 (
+\f3\b \cf8 NULL
+\f1\b0 \cf4 , Input);\cf2 // tokenizing a string\cf4 \
+      \}\
+      ptrARG[index] = 
+\f3\b \cf8 NULL
+\f1\b0 \cf4 ;\
+      
+\f3\b \cf8 return
+\f1\b0 \cf4  ptrARG;\
+\}\
+\
+\cf7 ///
+\f0 \cf2 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+\f1 \cf4 \
+\cf7 ///
+\f0 \cf2 /////////////////////////////////////                    P  I  P  E       F U N C T I O N                  /////////////////////////////////////
+\f1 \cf4 \
+\cf7 ///
+\f0 \cf2 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+\f1 \cf4 \
+
+\f3\b \cf8 void
+\f1\b0 \cf4  \cf9 pipe_Function\cf4 (
+\f3\b \cf8 char
+\f1\b0 \cf4  **Input)\
+\{\
+    
+\f3\b \cf8 int
+\f1\b0 \cf4  iterator, pfd[\cf10 2\cf4 ], processID, dummy=\cf10 0\cf4 ;\
+    
+\f3\b \cf8 int
+\f1\b0 \cf4  forFile,length=\cf10 0\cf4 , i=\cf10 0\cf4 ;\
+    \
+    
+\f3\b \cf8 char
+\f1\b0 \cf4  **delimeter=
+\f3\b \cf8 NULL
+\f1\b0 \cf4 ;\
+\
+    
+\f3\b \cf8 char
+\f1\b0 \cf4  *opdirect, **opLes=
+\f3\b \cf8 NULL
+\f1\b0 \cf4 , *ipdirect;\
+    
+\f3\b \cf8 char
+\f1\b0 \cf4  **ipNot=
+\f3\b \cf8 NULL
+\f1\b0 \cf4 , *checker = 
+\f3\b \cf8 NULL
+\f1\b0 \cf4 ;\
+ \cf2 //for loop\cf4 \
+    \
+    
+\f3\b \cf8 for
+\f1\b0 \cf4 (iterator = \cf10 0\cf4 ; Input[iterator]; iterator++)\
+    \{\
+        
+\f3\b \cf8 char
+\f1\b0 \cf4  copyArray[\cf11 strlen\cf4 (Input[iterator])];\cf2 //getting the length of string\cf4 \
+        \cf12 strcpy\cf4 (copyArray, Input[iterator]);\cf2 //copy string for array to other variable\cf4 \
+        opdirect = \cf11 strchr\cf4 (Input[iterator], \cf15 '>'\cf4 );\cf2 //first occurrence of a character in a string.\cf4 \
+        ipdirect = \cf11 strchr\cf4 (Input[iterator], \cf15 '<'\cf4 );\cf2 //first occurrence of a character in a string.\cf4 \
+        
+\f3\b \cf8 if
+\f1\b0 \cf4 (Input[iterator][\cf11 strlen\cf4 (Input[iterator]) - \cf10 1\cf4 ] == \cf15 '&'\cf4 )\
+        \{\
+            checker = \cf11 strchr\cf4 (Input[iterator], \cf15 '&'\cf4 );\
+            Input[iterator][\cf11 strlen\cf4 (Input[iterator]) - \cf10 1\cf4 ] = \cf15 '\\0'\cf4 ;\
+        \}\
+           \
+        
+\f3\b \cf8 if
+\f1\b0 \cf4 (opdirect)\
+        \{\
+            opLes = \cf14 redirectionFunction\cf4 (Input[iterator], \cf6 ">"\cf4 );\
+            
+\f3\b \cf8 for
+\f1\b0 \cf4 (i = \cf10 0\cf4 ; opLes[i]; i++)\
+            \{\
+                forFile = \cf11 open\cf4 (opLes[i],  \cf12 O_CREAT\cf4  | \cf12 O_WRONLY\cf4   , \cf12 S_IRUSR\cf4  | \cf12 S_IWUSR\cf4  );  \cf2 //opening the file\cf4 \
+                \cf11 close\cf4 (forFile);\cf2 //closing file\cf4 \
+            \}\
+        \}\
+        \cf12 strcpy\cf4 (Input[iterator], copyArray);\cf2 //copying file\cf4 \
+        \
+        
+\f3\b \cf8 if
+\f1\b0 \cf4 (ipdirect)\
+        \{\
+            ipNot = \cf14 redirectionFunction\cf4 (Input[iterator], \cf6 "<"\cf4 );\
+            
+\f3\b \cf8 for
+\f1\b0 \cf4 (length = \cf10 0\cf4 ; ipNot[length]; length++)\{\
+ \
+                        \}\
+                \}\
+     \
+     \cf12 strcpy\cf4 (Input[iterator], copyArray);\
+     delimeter = \cf14 parserArg\cf4 (Input[iterator], \cf6 " "\cf4 );\
+     \cf11 pipe\cf4 (pfd);\
+        \cf2 //using fork command\cf4 \
+        processID = \cf11 fork\cf4 ();\
+       \
+        
+\f3\b \cf8 if
+\f1\b0 \cf4 (processID == \cf10 0\cf4 )\
+       \{\
+             
+\f3\b \cf8 if
+\f1\b0 \cf4 (iterator != \cf10 0\cf4 )\
+             \cf11 dup2\cf4 (dummy, \cf12 STDIN_FILENO\cf4 );\
+ \
+             
+\f3\b \cf8 if
+\f1\b0 \cf4 (Input[iterator+\cf10 1\cf4 ] != 
+\f3\b \cf8 NULL
+\f1\b0 \cf4 )\
+             \cf11 dup2\cf4 (pfd[\cf10 1\cf4 ], \cf12 STDOUT_FILENO\cf4 );\
+               \
+             
+\f3\b \cf8 if
+\f1\b0 \cf4 (opdirect)\
+               \{\
+                   \cf11 close\cf4 (\cf12 STDOUT_FILENO\cf4 );\
+                   forFile = \cf11 open\cf4 (opLes[i - \cf10 1\cf4 ],  \cf12 O_CREAT\cf4  | \cf12 O_WRONLY\cf4   , \cf12 S_IRUSR\cf4  | \cf12 S_IWUSR\cf4  );\
+               \}\
+               
+\f3\b \cf8 if
+\f1\b0 \cf4 (ipdirect)\
+               \{\
+                   \cf11 close\cf4 (\cf12 STDIN_FILENO\cf4 );\
+                   forFile = \cf11 open\cf4 (ipNot[length - \cf10 1\cf4 ], \cf12 O_RDONLY\cf4 );\
+               \}\
+               \cf11 close\cf4 (pfd[\cf10 0\cf4 ]);\
+           \
+           \
+             \cf2 //execvp() system call\cf4 \
+         
+\f3\b \cf8 if
+\f1\b0 \cf4 (\cf11 execvp\cf4 (delimeter[\cf10 0\cf4 ], delimeter ) == -\cf10 1\cf4 )\
+         \cf11 perror\cf4 (\cf6 ""\cf4 );\
+\
+       \}\
+       
+\f3\b \cf8 else
+\f1\b0 \cf4 \
+       \{\
+           \cf11 close\cf4 (pfd[\cf10 1\cf4 ]);\
+           
+\f3\b \cf8 if
+\f1\b0 \cf4 (!checker)\
+           \{\
+           \cf11 wait\cf4 (\cf10 0\cf4 );\
+           \}\
+               dummy = pfd[\cf10 0\cf4 ];\
+       \}\
+\}\
+\}\
+\cf7 ///
+\f0 \cf2 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+\f1 \cf4 \
+\cf7 ///
+\f0 \cf2 /////////////////////////////////////                B A S I C      F U N C T I O N                      /////////////////////////////////////
+\f1 \cf4 \
+\cf7 ///
+\f0 \cf2 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+\f1 \cf4 \
+\
+
+\f3\b \cf8 void
+\f1\b0 \cf4  \cf9 basic_Command\cf4 (
+\f3\b \cf8 char
+\f1\b0 \cf4 * Input)\
+\{\
+    
+\f3\b \cf8 int
+\f1\b0 \cf4  processID, fd, i=\cf10 0\cf4 , k = \cf10 0\cf4 ;\
+    
+\f3\b \cf8 char
+\f1\b0 \cf4  **ptrArg, *opRedirect, **opLes=
+\f3\b \cf8 NULL
+\f1\b0 \cf4 , *ipRedirect, **ipNot = 
+\f3\b \cf8 NULL
+\f1\b0 \cf4 , *dummy = 
+\f3\b \cf8 NULL
+\f1\b0 \cf4 ;\
+    opRedirect = \cf11 strchr\cf4 (Input, \cf15 '>'\cf4 );\
+    ipRedirect = \cf11 strchr\cf4 (Input, \cf15 '<'\cf4 );\
+    
+\f3\b \cf8 if
+\f1\b0 \cf4 (Input[\cf11 strlen\cf4 (Input) - \cf10 1\cf4 ] == \cf15 '&'\cf4 )\cf2 //getting length of string\cf4 \
+    \{\
+        dummy = \cf11 strchr\cf4 (Input, \cf15 '&'\cf4 );\
+        Input[\cf11 strlen\cf4 (Input) - \cf10 1\cf4 ] = \cf15 '\\0'\cf4 ;\
+    \}\
+    
+\f3\b \cf8 char
+\f1\b0 \cf4  copyArray[\cf11 strlen\cf4 (Input)];\
+    \cf12 strcpy\cf4 (copyArray, Input);\
+      
+\f3\b \cf8 if
+\f1\b0 \cf4 (opRedirect)\
+      \{\
+              opLes = \cf14 redirectionFunction\cf4 (Input, \cf6 ">"\cf4 );\
+              
+\f3\b \cf8 for
+\f1\b0 \cf4 (i = \cf10 0\cf4 ; opLes[i]; i++)\
+              \{\
+                  fd = \cf11 open\cf4 (opLes[i],  \cf12 O_CREAT\cf4  | \cf12 O_WRONLY\cf4   , \cf12 S_IRUSR\cf4  | \cf12 S_IWUSR\cf4  );\
+                  \cf11 close\cf4 (fd);\
+              \}\
+      \}\
+    \cf2 //string copy\cf4 \
+      \cf12 strcpy\cf4 (Input, copyArray);\
+\
+      
+\f3\b \cf8 if
+\f1\b0 \cf4 (ipRedirect)\
+      \{\
+        ipNot = \cf14 redirectionFunction\cf4 (Input, \cf6 "<"\cf4 );\
+        
+\f3\b \cf8 for
+\f1\b0 \cf4 (k = \cf10 0\cf4 ; ipNot[k]; k++)\
+        \{\
+                       \
+        \}\
+      \}\
+    \
+    \
+    \cf2 //string copy\cf4 \
+      \cf12 strcpy\cf4 (Input, copyArray);\
+    ptrArg = \cf14 parserArg\cf4 (Input, \cf6 " "\cf4 );\
+        \
+    \
+    \cf2 //using fork command\cf4 \
+      processID = \cf11 fork\cf4 ();\
+        
+\f3\b \cf8 if
+\f1\b0 \cf4 (processID == \cf10 0\cf4 )\
+        \{\
+            
+\f3\b \cf8 if
+\f1\b0 \cf4 (opRedirect)\
+            \{\
+                \cf11 close\cf4 (\cf12 STDOUT_FILENO\cf4 );\
+                \cf2 //file opening\cf4 \
+            fd = \cf11 open\cf4 (opLes[i - \cf10 1\cf4 ],  \cf12 O_CREAT\cf4  | \cf12 O_WRONLY\cf4   , \cf12 S_IRUSR\cf4  | \cf12 S_IWUSR\cf4  );\
+              \}\
+              
+\f3\b \cf8 if
+\f1\b0 \cf4 (ipRedirect)\
+              \{\
+                  \cf11 close\cf4 (\cf12 STDIN_FILENO\cf4 );\
+                  fd = \cf11 open\cf4 (ipNot[k - \cf10 1\cf4 ], \cf12 O_RDONLY\cf4 );\
+              \}\
+              
+\f3\b \cf8 if
+\f1\b0 \cf4 (\cf11 execvp\cf4 (ptrArg[\cf10 0\cf4 ], ptrArg ) == -\cf10 1\cf4 )\
+              \cf11 perror\cf4 (\cf6 ""\cf4 );\
+            \}\
+            
+\f3\b \cf8 else
+\f1\b0 \cf4 \
+                \{\
+                    
+\f3\b \cf8 if
+\f1\b0 \cf4 (!dummy)\
+                    \{\
+                        \cf11 wait\cf4 (\cf10 0\cf4 );\
+                    \}\
+                \}\
+\}\
+\cf2 //main function\cf4 \
+
+\f3\b \cf8 int
+\f1\b0 \cf4  \cf9 main\cf4 ()\
+\{\
+      
+\f3\b \cf8 int
+\f1\b0 \cf4  index, length;\
+      
+\f3\b \cf8 char
+\f1\b0 \cf4  choice,*cmd, **ptrARG, **inputs;\
+        \
+        
+\f3\b \cf8 struct
+\f1\b0 \cf4  \cf16 sigaction\cf4  obj;\
+        obj.\cf12 sa_handler\cf4  = \cf14 forKill\cf4 ;\
+       \
+        \cf11 signal\cf4 (\cf12 SIGINT\cf4 , \cf14 forKill\cf4 );\
+        \cf11 signal\cf4 (\cf12 SIGTSTP\cf4 , \cf14 forKill\cf4 );\
+        
+\f3\b \cf8 while
+\f1\b0 \cf4 (\cf10 1\cf4 )\
+        \{\
+            \cf11 printf\cf4 (\cf6 "Input : "\cf4 );\
+            cmd = (
+\f3\b \cf8 char
+\f1\b0 \cf4  *)\cf11 malloc\cf4 (
+\f3\b \cf8 sizeof
+\f1\b0 \cf4 (
+\f3\b \cf8 char
+\f1\b0 \cf4 ) * \cf10 128\cf4 );\
+            index = \cf10 0\cf4 ;\
+            length = \cf10 100\cf4 ;\
+            choice = \cf11 getchar\cf4 ();\
+            
+\f3\b \cf8 if
+\f1\b0 \cf4 (choice == \cf12 EOF\cf4 )\
+            \{\
+                
+\f3\b \cf8 return
+\f1\b0 \cf4  \cf10 0\cf4 ;\
+            \}\
+            
+\f3\b \cf8 else
+\f1\b0 \cf4 \
+            \{\
+                \cf2 //while loop\cf4 \
+                
+\f3\b \cf8 while
+\f1\b0 \cf4 ( choice != \cf15 '\\n'\cf4 )\
+                \{\
+                    
+\f3\b \cf8 if
+\f1\b0 \cf4 (index >= length)\
+                    \{\
+                        length *= \cf10 2\cf4 ;\
+                        cmd = (
+\f3\b \cf8 char
+\f1\b0 \cf4  *)\cf11 realloc\cf4 (cmd, 
+\f3\b \cf8 sizeof
+\f1\b0 \cf4 (
+\f3\b \cf8 char
+\f1\b0 \cf4 ) * length);\cf2 //allocating the space Array\cf4 \
+                    \}\
+                    cmd[index++] = choice;\
+                    choice = \cf11 getchar\cf4 ();\
+                    
+\f3\b \cf8 if
+\f1\b0 \cf4 (choice == \cf12 EOF\cf4 )\
+                    
+\f3\b \cf8 continue
+\f1\b0 \cf4 ;\
+                \}\
+                \
+                ptrARG = \cf14 parsingCommand\cf4 (cmd, \cf6 ";"\cf4 );\
+\
+                
+\f3\b \cf8 for
+\f1\b0 \cf4 (index = \cf10 0\cf4 ; ptrARG[index]; index++)\
+                \{\
+                    
+\f3\b \cf8 char
+\f1\b0 \cf4  *p = \cf11 strchr\cf4 (ptrARG[index], \cf15 '|'\cf4 );\
+                    
+\f3\b \cf8 if
+\f1\b0 \cf4 (p)\
+                    \{\
+                        inputs = \cf14 parsingCommand\cf4 (ptrARG[index], \cf6 "|"\cf4 );\
+                        \cf14 pipe_Function\cf4 (inputs);\
+                    \}\
+                    
+\f3\b \cf8 else
+\f1\b0 \cf4 \
+                    \{\
+                        \cf14 basic_Command\cf4 (ptrARG[index]);\
+                    \}\
+                \}\
+              \}\
+            \}\
+      
+\f3\b \cf8 return
+\f1\b0 \cf4  \cf10 0\cf4 ;\
+\}\
+}
